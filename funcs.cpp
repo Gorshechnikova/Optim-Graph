@@ -4,7 +4,7 @@
 
 double norm_2(std::vector<double> x) {
 	double ans{};
-	for (int i = 0; i < x.size(); ++i)
+    for (size_t i = 0; i < x.size(); ++i)
 		ans += x[i] * x[i];
 	return ans;
 }
@@ -31,7 +31,7 @@ std::vector<double> operator-(const std::vector<double>&a, const std::vector<dou
 		assert("a.size() != b.size()"); 
 	int dim = a.size();
 	std::vector<double> c(dim);
-	for (size_t i = 0; i <dim; ++i)
+    for (int i = 0; i < dim; ++i)
 		c[i] = a[i] - b[i];
 	return c;
 }
@@ -42,7 +42,7 @@ std::vector<double> operator+(const std::vector<double>&a, const std::vector<dou
 		assert("a.size() != b.size()");
 	int dim = a.size();
 	std::vector<double> c(dim);
-	for (size_t i = 0; i < dim; ++i)
+    for (int i = 0; i < dim; ++i)
 		c[i] = a[i] + b[i];
 	return c;
 }
@@ -51,7 +51,7 @@ std::vector<double> operator/(const std::vector<double>&a, const double &b)
 {
 	int dim = a.size();
 	std::vector<double> c(dim);
-	for (size_t i = 0; i < dim; ++i)
+    for (int i = 0; i < dim; ++i)
 		c[i] = a[i] / b;
 	return c;
 }
@@ -60,7 +60,7 @@ std::vector<double> operator*(const double &b, const std::vector<double>&a)
 {
 	int dim = a.size();
 	std::vector<double> c(dim);
-	for (size_t i = 0; i < dim; ++i)
+    for (int i = 0; i < dim; ++i)
 		c[i] = a[i] * b;
 	return c;
 }

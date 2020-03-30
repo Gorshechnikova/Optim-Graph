@@ -233,8 +233,6 @@ void MainWindow::mouseClick(QMouseEvent* event)
     }
     method->Set_limit_iter(ui->limit_iter->value());
 
-
-    //тут добавить проверку на принадлежность области рисования
     ui->result->clear();
     ui->result->insertPlainText("Начальная точка: ");
     QString num;
@@ -243,7 +241,7 @@ void MainWindow::mouseClick(QMouseEvent* event)
     geomy = border[2] + (border[3]-border[2])*((-double((event->y()) - 372.))/358);
     if (geomx < border[0] || geomx > border[1] ||
             geomy < border[2] || geomy > border[3])
-        close();
+        return;
 //    geomx = event->x();
 //    geomy = event->y();
     num = QString::number(geomx);
@@ -251,28 +249,35 @@ void MainWindow::mouseClick(QMouseEvent* event)
     ui->result->insertPlainText(" ");
     num = QString::number(geomy);
     ui->result->insertPlainText(num);
-    //ui->result->setText("\n");
-//    ui->x_0->setValue(geomx);
-//    ui->y_0->setValue(geomy);
-//    opt.x_0[0] = ui->x_0->value();
-//    opt.x_0[1] = ui->y_0->value();
 
     method->Set_x0y0y1(geomx, geomy);
     std::vector <double> answer = method->optimize(area, function, criterion);
 
+    num = QString::number(method->Get_iter());
+    ui->result->insertPlainText("\t Кол-во итераций: ");
+    ui->result->insertPlainText(num);
+    num = QString::number(answer[0]);
+    ui->result->insertPlainText("\nКонечная точка: ");
+    ui->result->insertPlainText(num);
+    ui->result->insertPlainText(" ");
+    num = QString::number(answer[1]);
+    ui->result->insertPlainText(num);
+    ui->result->insertPlainText("\t Значение в ней: ");
+    num = QString::number(function->eval(answer[0], answer[1]));
+    ui->result->insertPlainText(num);
+
     QVector <double> qx = QVector<double>(method->x.begin(), method->x.end());
     QVector <double> qy = QVector<double>(method->y.begin(), method->y.end());
     QCPCurve * graph = new QCPCurve(ui->customPlot->xAxis, ui->customPlot->yAxis);
-        //QCPCurve *pathGraph = ui->plot->addGraph();
     graph->setData(qx, qy);
-    graph->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, QPen(Qt::red, 0), QBrush(Qt::red), 5));
-    graph->setPen(QPen(Qt::gray, 2));
+    graph->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssDiamond, 7));
+    graph->setPen(QPen(Qt::white, 1));
     QCPCurve * final = new QCPCurve(ui->customPlot->xAxis, ui->customPlot->yAxis);
     QVector<double> argx, argy;
-    argx = QVector<double>(answer[0]);
-    argy = QVector<double>(answer[1]);
+    argx.push_back(answer[0]);
+    argy.push_back(answer[1]);
     final->setData(argx, argy);
-    final->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCross, QPen(Qt::yellow, 3), QBrush(Qt::yellow), 12));
+    final->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssStar, QPen(Qt::red, 2), QBrush(Qt::red), 9));
     final->setPen(QPen(QColor(120, 120, 120), 2));
     ui->customPlot->replot();
     ui->customPlot->QCustomPlot::removePlottable(graph);

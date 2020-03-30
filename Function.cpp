@@ -20,10 +20,12 @@ std::vector<double> Golden_ratio(std::vector<double> a, std::vector<double> b, d
         double y2 = a[1] + t[1];
         if (func->eval(x1, y1) > func->eval(x2, y2))
         {
+            a.clear();
             a.push_back(x1);
             a.push_back(y1);
         }
         else {
+            b.clear();
             b.push_back(x2);
             b.push_back(y2);
         }

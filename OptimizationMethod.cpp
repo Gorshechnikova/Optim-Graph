@@ -4,6 +4,7 @@
 #include <random>
 #include "funcs.h"
 #include <typeinfo>
+#include "QRandomGenerator"
 
 const double min_fun = 9999;
 const double step = 1e-10;
@@ -84,8 +85,8 @@ void OptimizationMethod::Set_eps(double epsil) {
 }
 
 std::vector<double> Stochastic::optimize(Area * area, Function * func, StopCriterion * criterion) {
-	std::random_device rd;
-	std::mt19937 gen(rd());
+    //std::random_device rd;
+    //std::mt19937 gen(rd());
 	//std::mt19937 gen(5);
 	int dim = area->GetDimension();
 	std::vector<double> border = area->GetBorder(), grad;
@@ -99,16 +100,16 @@ std::vector<double> Stochastic::optimize(Area * area, Function * func, StopCrite
     y.push_back(y0[1]);
     double curr_eval = func->eval(y0[0], y0[1]), new_eval{};
 	while (iter < limit_iter && n_h < n_hat) {
-		rand = dis(gen);         //этот rand для сравнения с вероятностью prob для выбора области
+        rand = dis(*QRandomGenerator::global());         //этот rand для сравнения с вероятностью prob для выбора области
 		if (rand > prob) {       //в качестве области выбирается вся область
 			for (int i = 0; i < dim; ++i) {
-				rand = dis(gen);     //этот rand для выбора рандомной точки в выбранной области для каждой координаты
+                rand = dis(*QRandomGenerator::global());     //этот rand для выбора рандомной точки в выбранной области для каждой координаты
 				y1[i] = border[2 * i] + rand * (border[2 * i + 1] - border[2 * i]);
 			}
 		}
 		else {                   //в качестве области выбирается куб "радиусом" delta
 			for (int i = 0; i < dim; ++i) {
-				rand = dis(gen);     //этот rand для выбора рандомной точки в выбранной области для каждой координаты
+                rand = dis(*QRandomGenerator::global());     //этот rand для выбора рандомной точки в выбранной области для каждой координаты
 				if (y0[i] - delta < border[i * 2])
 					y1[i] = border[2 * i] + rand * (y0[i] + delta - border[2 * i]);
 				else if (y0[i] + delta > border[i * 2 + 1])
@@ -119,8 +120,6 @@ std::vector<double> Stochastic::optimize(Area * area, Function * func, StopCrite
 		}
 		++iter;
         new_eval = func->eval(y1[0], y1[1]);
-        x.push_back(y1[0]);
-        y.push_back(y1[1]);
 		if (typeid(*criterion) == typeid(n_iter)) {
 			if (criterion->stop(y0, y1, curr_eval, new_eval, grad))      //пояснения работы в StopCriterion.cpp
 				++n_h;
@@ -131,10 +130,15 @@ std::vector<double> Stochastic::optimize(Area * area, Function * func, StopCrite
 		}
 		else
 		{
-			if (criterion->stop(y0, y1, curr_eval, new_eval, grad))
+            if (criterion->stop(y0, y1, curr_eval, new_eval, grad)){
+                x.push_back(y0[0]);
+                y.push_back(y0[1]);
 				return y0;
+            }
 		}
 		if (new_eval < curr_eval) {
+            x.push_back(y1[0]);
+            y.push_back(y1[1]);
 			y0 = y1;
 			curr_eval = new_eval;
 		}

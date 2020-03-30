@@ -20,7 +20,7 @@ bool coord::stop(std::vector<double> x0, std::vector<double> x1, double f0, doub
 };
 
 bool value::stop(std::vector<double> x0, std::vector<double> x1, double f0, double f1, std::vector<double> grad) {
-	if (abs((f1 - f0)/f1) < eps)
+    if (qFabs((f1 - f0)/f1) < eps)
 		return true;
 	return false;
 };
@@ -37,7 +37,7 @@ bool n_iter::stop(std::vector<double> x0, std::vector<double> x1, double f0, dou
 }
 
 bool last_improv::stop(std::vector<double> x0, std::vector<double> x1, double f0, double f1, std::vector<double> grad) {
-	if (abs(f1-f0) < eps)
+    if (qFabs(f1-f0) < eps)
 		return true;
 	return false;
 }

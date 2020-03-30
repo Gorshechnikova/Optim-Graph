@@ -6,6 +6,7 @@
 #include <vector>
 #include <iostream>
 #include <random>
+#include "QtMath"
 
 ///Константа, применяемая в золотом сечении
 const double phi = 0.5 * (1.0 + sqrt(5.0));
